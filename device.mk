@@ -12,6 +12,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Get non-open-source specific aspects
 $(call inherit-product-if-exists, vendor/xiaomi/perseus/perseus-vendor.mk)
 
+# Firmware
+$(call inherit-product, vendor/xiaomi/firmware/perseus/firmware.mk)
+
 # Boot animation
 TARGET_SCREEN_HEIGHT := 2340
 TARGET_SCREEN_WIDTH := 1080
