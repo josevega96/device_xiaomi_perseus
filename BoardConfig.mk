@@ -16,6 +16,7 @@ TARGET_OTA_ASSERT_DEVICE := perseus
 TARGET_SCREEN_DENSITY := 440
 
 # Kernel
+TARGET_KERNEL_SOURCE := kernel/xiaomi/perseus
 BOARD_KERNEL_SEPARATED_DTBO := true
 TARGET_KERNEL_CONFIG := perseus_defconfig
 
