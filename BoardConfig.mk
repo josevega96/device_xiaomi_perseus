@@ -15,6 +15,7 @@ TARGET_OTA_ASSERT_DEVICE := perseus
 TARGET_SCREEN_DENSITY := 440
 
 # Kernel 
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive 
 BOARD_KERNEL_SEPARATED_DTBO := true
 TARGET_KERNEL_CONFIG := perseus_defconfig
 
