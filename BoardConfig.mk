@@ -50,5 +50,8 @@ BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flag 2
 BOARD_SEPOLICY_DIRS += \
     $(DEVICE_PATH)/sepolicy/vendor
 
+# VNDK - disable isolation
+BOARD_VNDK_RUNTIME_DISABLE := true
+
 # Inherit from the proprietary version
 -include vendor/xiaomi/perseus/BoardConfigVendor.mk
