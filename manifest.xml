@@ -1,5 +1,14 @@
 <manifest version="1.0" type="device" target-level="3">
     <hal format="hidl">
+        <name>android.frameworks.sensorservice</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ISensorManager</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
         <name>android.hardware.gnss</name>
         <transport>hwbinder</transport>
         <version>2.0</version>
@@ -51,6 +60,15 @@
         <interface>
             <name>INqNfc</name>
             <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.qti.hardware.mlshal</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IMlsVnc</name>
+            <instance>mlsvnchal</instance>
         </interface>
     </hal>
 </manifest>
