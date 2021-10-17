@@ -42,6 +42,10 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 # Inherit from sdm845-common
 $(call inherit-product, device/xiaomi/sdm845-common/sdm845.mk)
 
+# SELinux
+BOARD_SEPOLICY_DIRS += \
+    $(DEVICE_PATH)/sepolicy/vendor
+    
 # Audio
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_platform_info.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_platform_info.xml \
@@ -101,6 +105,8 @@ PRODUCT_PACKAGES += \
 # Slider settings
 PRODUCT_PACKAGES += \
     DeviceSettings
+
+PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(LOCAL_PATH)/devicesettings/snd,$(TARGET_COPY_OUT_PRODUCT)/media/audio/ui)
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

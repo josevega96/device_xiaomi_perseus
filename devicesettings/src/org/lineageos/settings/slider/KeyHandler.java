@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 The LineageOS Project
+ * Copyright (C) 2018 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.lineageos.settings.device;
-
-import static android.view.KeyEvent.ACTION_DOWN;
+package org.lineageos.settings.slider;
 
 import android.app.ActivityManager;
+import android.app.Instrumentation;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.camera2.CameraManager;
+import android.media.MediaPlayer;
 import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.os.UserHandle;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -35,6 +35,8 @@ import com.android.internal.os.DeviceKeyHandler;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.view.KeyEvent.ACTION_DOWN;
 
 public class KeyHandler extends CameraManager.AvailabilityCallback
         implements DeviceKeyHandler {
@@ -49,6 +51,8 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
     private boolean mIsCameraAppOpen = false;
     private boolean mIsDefaultCameraAppOpen = false;
     private Timer mCameraInUseTimer;
+    private String sound_name;
+    private String sound_state;
 
     public KeyHandler(Context context) {
         mContext = context;
@@ -88,6 +92,12 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
     }
 
     public KeyEvent handleKeyEvent(KeyEvent event) {
+        int slider = SystemProperties.getInt("persist.slider.disable", 0);
+
+        if (slider == 1) {
+            return event;
+        }
+
         if (!mPowerManager.isInteractive()) {
             return event;
         }
@@ -100,9 +110,13 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
         int scanCode = event.getScanCode();
         switch (scanCode) {
             case KEYCODE_SLIDER_UP:
+                sound_state = "close";
+                playSound();
                 handleSliderUp();
                 break;
             case KEYCODE_SLIDER_DOWN:
+                sound_state = "open";
+                playSound();
                 handleSliderDown();
                 break;
             default:
@@ -139,7 +153,9 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
             intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
         }
 
-        intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", frontCamera);
+        intent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
+        intent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+        intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -150,14 +166,15 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
     }
 
     private void doHapticFeedback() {
-        if (mVibrator != null && mVibrator.hasVibrator()) {
-            mVibrator.vibrate(VibrationEffect.createOneShot(40,
-                    VibrationEffect.DEFAULT_AMPLITUDE));
+        if (mVibrator == null || !mVibrator.hasVibrator()) {
+            return;
         }
+
+        mVibrator.vibrate(40);
     }
 
     private void handleSliderDown() {
-        if (mIsCameraAppOpen && !mIsDefaultCameraAppOpen) {
+        if (mIsCameraAppOpen && mIsDefaultCameraAppOpen) {
             return;
         }
 
@@ -169,6 +186,35 @@ public class KeyHandler extends CameraManager.AvailabilityCallback
             return;
         }
 
-        openDefaultCameraApp(false /* frontCamera */);
+        Instrumentation m_Instrumentation = new Instrumentation();
+        m_Instrumentation.sendKeyDownUpSync( KeyEvent.KEYCODE_BACK );
     }
+
+    private void playSound(){
+       sound_name = SystemProperties.get("persist.slider.sound");
+       if (sound_name == "none") {
+          return;
+       }
+
+       MediaPlayer mp = new MediaPlayer();
+       try {
+           mp.setDataSource("file:///product/media/audio/ui/slide_"+sound_name+"_"+sound_state+".ogg");
+           mp.prepare();
+           mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+             @Override
+             public void onCompletion(MediaPlayer mp)
+             {
+              mp.stop();
+              mp.reset();
+              mp.release();
+              mp=null;
+             }
+           });
+           mp.start();
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+   }
+
 }
