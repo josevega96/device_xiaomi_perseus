@@ -19,12 +19,11 @@ package org.lineageos.settings.slider;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemProperties;
-import android.view.MenuItem;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceFragment;
-import androidx.preference.SwitchPreference;
+import com.android.settingslib.widget.MainSwitchPreference;
 
 import org.lineageos.settings.slider.R;
 import org.lineageos.settings.slider.utils.FileUtils;
@@ -33,7 +32,7 @@ public class SliderSettingsFragment extends PreferenceFragment implements
         OnPreferenceChangeListener {
 
     private ListPreference mSoundPreference;
-    private SwitchPreference mSliderPreference;
+    private MainSwitchPreference mSliderPreference;
 
     private static final String SLIDER_DISABLE_KEY = "slider_disable";
     private static final String SLIDER_DISABLE_PROPERTY = "persist.slider.disable";
@@ -43,8 +42,7 @@ public class SliderSettingsFragment extends PreferenceFragment implements
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.slider_settings);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-        mSliderPreference = (SwitchPreference) findPreference(SLIDER_DISABLE_KEY);
+        mSliderPreference = (MainSwitchPreference) findPreference(SLIDER_DISABLE_KEY);
         mSliderPreference.setEnabled(true);
         mSliderPreference.setOnPreferenceChangeListener(this);
 
@@ -78,14 +76,4 @@ public class SliderSettingsFragment extends PreferenceFragment implements
             default: return false;
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getActivity().onBackPressed();
-            return true;
-        }
-        return false;
-    }
-
 }
