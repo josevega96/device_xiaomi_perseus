@@ -18,7 +18,8 @@
     <!-- Slider settings -->
     <string name="slider_settings_title">Slider settings</string>
     <string name="slider_settings_summary">Adjust slider related settings</string>
-    <string name="camera_title">Disable camera</string>
+    <string name="slider_mode_title">Camera mode</string>
+    <string name="slider_mode_summary">Don\'t start camera when opening slider</string>
 
     <!-- Slider settings: Sounds -->
     <string name="slider_sound_title">Slider Sounds</string>
