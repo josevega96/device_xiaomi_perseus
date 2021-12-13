@@ -1,4 +1,5 @@
 type devicesettings, domain;
+typeattribute devicesettings mlstrustedsubject;
 
 app_domain(devicesettings)
 
